@@ -29,6 +29,45 @@ var_nesting=1    # Nested containers allowed, for systemd, Docker, Podman, etc.
 APP_NAME="Raycast Relay"
 APP_NAME_LINUX="raycast_relay"
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
+INSTALLER_REPO_BASE_URL="https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main"
+LOCAL_INSTALLER_PATH=""
+USE_LOCAL_INSTALLER="false"
+
+function configure_installer_source() {
+  local install_url="${INSTALLER_REPO_BASE_URL}/install/${var_install}.sh"
+  LOCAL_INSTALLER_PATH="${PROJECT_ROOT}/install/${var_install}.sh"
+
+  if [[ -f "${LOCAL_INSTALLER_PATH}" ]]; then
+    USE_LOCAL_INSTALLER="true"
+    msg_info "Using local installer: ${LOCAL_INSTALLER_PATH}"
+    msg_ok "Local installer source configured"
+    return
+  fi
+
+  if curl -fsSL "$install_url" >/dev/null 2>&1; then
+    USE_LOCAL_INSTALLER="false"
+    msg_info "Local installer missing, falling back to upstream installer"
+    msg_ok "Upstream installer source configured"
+    return
+  fi
+
+  msg_error "No installer source found."
+  msg_error "Missing local file: ${LOCAL_INSTALLER_PATH}"
+  msg_error "Missing upstream file: ${install_url}"
+  exit 1
+}
+
+function curl() {
+  local url="${@: -1}"
+  if [[ "${USE_LOCAL_INSTALLER}" == "true" && "${url}" == "${INSTALLER_REPO_BASE_URL}/install/${var_install}.sh" ]]; then
+    cat "${LOCAL_INSTALLER_PATH}"
+    return 0
+  fi
+  command curl "$@"
+}
+
 # ============================================================================
 # INITIALIZATION - These are required in all CT scripts
 # ============================================================================
@@ -36,6 +75,7 @@ header_info "$APP" # Display app name and setup header
 variables          # Initialize build.func variables
 color              # Load color variables for output
 catch_errors       # Enable error handling with automatic exit on failure
+configure_installer_source
 
 function update_script() {
   header_info
