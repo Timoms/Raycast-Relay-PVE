@@ -31,7 +31,7 @@ APP_NAME_LINUX="raycast_relay"
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
-INSTALLER_REPO_BASE_URL="https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main"
+INSTALLER_REPO_BASE_URL="https://raw.githubusercontent.com/Timoms/Raycast-Relay-PVE/main"
 LOCAL_INSTALLER_PATH=""
 USE_LOCAL_INSTALLER="false"
 
