@@ -63,7 +63,6 @@ fi
 API_KEY=$(prompt_input_required "Enter Local API Key or use the generated one (openssl rand -hex 32):" "$API_KEY" 120 "var_api_key")
 INCLUDE_PREMIUM=$(prompt_input "Include premium models? (y/n)" "n" 30)
 INCLUDE_DEPRECATED=$(prompt_input "Include deprecated models? (y/n)" "n" 30)
-PORT=$(prompt_input_required "Enter the port for the Raycast Relay server (default 8788):" "8788" 30 "var_port")
 
 if [[ "$INCLUDE_PREMIUM" == "y" ]]; then
   INCLUDE_PREMIUM=true
